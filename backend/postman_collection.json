@@ -1,0 +1,390 @@
+{
+  "info": {
+    "name": "Community Pulse API",
+    "description": "Complete API collection for Community Pulse Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "YOUR_AUTH0_JWT_TOKEN",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Create Normal Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Great community BBQ this weekend at the park! Everyone welcome.\",\n  \"community\": \"MapleTown\",\n  \"location\": \"Central Park\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/posts",
+              "host": ["{{base_url}}"],
+              "path": ["posts"]
+            }
+          }
+        },
+        {
+          "name": "Create Emergency Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"URGENT: House fire on Maple Street! Smoke everywhere, fire trucks needed immediately!\",\n  \"community\": \"MapleTown\",\n  \"location\": \"Maple Street\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/posts",
+              "host": ["{{base_url}}"],
+              "path": ["posts"]
+            }
+          }
+        },
+        {
+          "name": "Create Lost Pet Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Lost golden retriever near Oak Street. Answers to Max. Please call if found.\",\n  \"community\": \"MapleTown\",\n  \"location\": \"Oak Street\",\n  \"imageUrl\": \"https://example.com/max.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/posts",
+              "host": ["{{base_url}}"],
+              "path": ["posts"]
+            }
+          }
+        },
+        {
+          "name": "List All Posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["posts"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Posts by Community",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts?community=MapleTown&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["posts"],
+              "query": [
+                {
+                  "key": "community",
+                  "value": "MapleTown"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Emergency Posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts?community=MapleTown&urgency=emergency",
+              "host": ["{{base_url}}"],
+              "path": ["posts"],
+              "query": [
+                {
+                  "key": "community",
+                  "value": "MapleTown"
+                },
+                {
+                  "key": "urgency",
+                  "value": "emergency"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Safety Posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts?community=MapleTown&category=Safety",
+              "host": ["{{base_url}}"],
+              "path": ["posts"],
+              "query": [
+                {
+                  "key": "community",
+                  "value": "MapleTown"
+                },
+                {
+                  "key": "category",
+                  "value": "Safety"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single Post",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts/:postId",
+              "host": ["{{base_url}}"],
+              "path": ["posts", ":postId"],
+              "variable": [
+                {
+                  "key": "postId",
+                  "value": "YOUR_POST_ID"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Posts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"q\": \"fire accident\",\n  \"community\": \"MapleTown\",\n  \"limit\": 20\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/posts/search",
+              "host": ["{{base_url}}"],
+              "path": ["posts", "search"]
+            }
+          }
+        },
+        {
+          "name": "Delete Post",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/posts/:postId",
+              "host": ["{{base_url}}"],
+              "path": ["posts", ":postId"],
+              "variable": [
+                {
+                  "key": "postId",
+                  "value": "YOUR_POST_ID"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "item": [
+        {
+          "name": "List Alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/alerts?community=MapleTown",
+              "host": ["{{base_url}}"],
+              "path": ["alerts"],
+              "query": [
+                {
+                  "key": "community",
+                  "value": "MapleTown"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Mock Alert (Official Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"fire\",\n  \"community\": \"MapleTown\",\n  \"reason\": \"Fire department notified of active fire on Maple Street\",\n  \"postIds\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/alerts/mock",
+              "host": ["{{base_url}}"],
+              "path": ["alerts", "mock"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Summary",
+      "item": [
+        {
+          "name": "Get Daily Summary (Today)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/summary/daily?community=MapleTown",
+              "host": ["{{base_url}}"],
+              "path": ["summary", "daily"],
+              "query": [
+                {
+                  "key": "community",
+                  "value": "MapleTown"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Daily Summary (Specific Date)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/summary/daily?community=MapleTown&date=2025-11-08",
+              "host": ["{{base_url}}"],
+              "path": ["summary", "daily"],
+              "query": [
+                {
+                  "key": "community",
+                  "value": "MapleTown"
+                },
+                {
+                  "key": "date",
+                  "value": "2025-11-08"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
