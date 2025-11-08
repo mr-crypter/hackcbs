@@ -88,9 +88,9 @@ export const alertsAPI = {
 
 // Summary API
 export const summaryAPI = {
-  // GET /api/summary - Get daily summary for community
+  // GET /api/summary/daily - Get daily summary for community
   get: (community, date) => 
-    api.get('/summary', { params: { community, date } }),
+    api.get('/summary/daily', { params: { community, date } }),
 }
 
 // Auth API
@@ -99,17 +99,20 @@ export const authAPI = {
   getMe: () => api.get('/auth/me'),
 }
 
+// Assistant API
+export const assistantAPI = {
+  // POST /api/assistant/chat - Chat with AI assistant
+  chat: (query, community) => 
+    api.post('/assistant/chat', { query, community }),
+}
+
 // Legacy alias for backward compatibility with existing components
 export const aiAPI = {
   // GET /api/summary - Get daily summary (alias for summaryAPI)
   getSummary: (community, date) => summaryAPI.get(community, date),
   
-  // Note: askGemini is not implemented in backend yet
-  // This is a placeholder for future Gemini assistant feature
-  askGemini: (query) => {
-    console.warn('askGemini is not yet implemented in backend')
-    return Promise.reject(new Error('Feature not yet available'))
-  },
+  // POST /api/assistant/chat - Chat with AI assistant (alias for assistantAPI)
+  askGemini: (query, community) => assistantAPI.chat(query, community),
 }
 
 export default api

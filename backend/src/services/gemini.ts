@@ -33,7 +33,7 @@ export async function extractTags(text: string, imageUrl?: string | null): Promi
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' }); // Using latest available model
 
     const prompt = `Analyze this community post and extract structured information in JSON format.
 

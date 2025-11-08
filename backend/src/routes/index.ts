@@ -3,6 +3,7 @@ import authRoutes from './auth';
 import postsRoutes from './posts';
 import alertsRoutes from './alerts';
 import summaryRoutes from './summary';
+import assistantRoutes from './assistant';
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.use('/auth', authRoutes);
 router.use('/posts', postsRoutes);
 router.use('/alerts', alertsRoutes);
 router.use('/summary', summaryRoutes);
+router.use('/assistant', assistantRoutes);
 
 export default router;
 

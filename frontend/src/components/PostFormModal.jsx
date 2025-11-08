@@ -7,8 +7,11 @@ import toast from 'react-hot-toast'
 const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
   const { user, getAccessTokenSilently } = useAuth0()
   const [text, setText] = useState('')
+  const [community, setCommunity] = useState('Downtown') // Default community
+  const [location, setLocation] = useState('')
   const [image, setImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
+  const [imageUrl, setImageUrl] = useState(null) // For image URL after upload
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
@@ -35,6 +38,11 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
       return
     }
 
+    if (!community.trim()) {
+      toast.error('Please select a community')
+      return
+    }
+
     try {
       setIsSubmitting(true)
       setIsAnalyzing(true)
@@ -42,45 +50,25 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
       const token = await getAccessTokenSilently()
       localStorage.setItem('auth_token', token)
 
-      // Create form data
-      const formData = new FormData()
-      formData.append('text', text.trim())
-      formData.append('authorName', user?.name || user?.email || 'Anonymous')
-      if (image) {
-        formData.append('image', image)
+      // Prepare post data - backend expects JSON, not FormData
+      const postData = {
+        text: text.trim(),
+        community: community.trim(),
+        location: location.trim() || null,
+        imageUrl: imageUrl || null, // For now, imageUrl is null (image upload can be added later)
       }
 
-      // First, create the post
-      const createResponse = await postsAPI.create(formData)
-      const createdPost = createResponse.data
+      // Backend automatically runs AI pipeline (Gemini + HuggingFace)
+      const createResponse = await postsAPI.create(postData)
+      const createdPost = createResponse.data.post || createResponse.data
 
-      // Then analyze it with AI
-      setIsAnalyzing(true)
-      try {
-        const analyzeResponse = await postsAPI.analyze({
-          postId: createdPost._id || createdPost.id,
-          text: text.trim(),
-        })
-        
-        // Merge AI analysis results
-        const enrichedPost = {
-          ...createdPost,
-          ...analyzeResponse.data,
-        }
-        
-        toast.success('Post created and analyzed!')
-        onPostCreated(enrichedPost)
-        resetForm()
-      } catch (analyzeError) {
-        console.error('Analysis error:', analyzeError)
-        // Post was created, but analysis failed - still show success
-        toast.success('Post created! (AI analysis pending)')
-        onPostCreated(createdPost)
-        resetForm()
-      }
+      toast.success('Post created with AI enrichment!')
+      onPostCreated(createdPost)
+      resetForm()
     } catch (error) {
       console.error('Error creating post:', error)
-      toast.error('Failed to create post')
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to create post'
+      toast.error(errorMessage)
     } finally {
       setIsSubmitting(false)
       setIsAnalyzing(false)
@@ -89,8 +77,11 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
 
   const resetForm = () => {
     setText('')
+    setCommunity('Downtown')
+    setLocation('')
     setImage(null)
     setImagePreview(null)
+    setImageUrl(null)
   }
 
   const handleClose = () => {
@@ -129,6 +120,39 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
             </div>
           )}
 
+          {/* Community Input */}
+          <div className="mb-4">
+            <label htmlFor="community" className="block text-sm font-medium text-gray-700 mb-2">
+              Community <span className="text-danger-500">*</span>
+            </label>
+            <input
+              id="community"
+              type="text"
+              value={community}
+              onChange={(e) => setCommunity(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="e.g., Downtown, Northside, Westside"
+              disabled={isSubmitting}
+              required
+            />
+          </div>
+
+          {/* Location Input (Optional) */}
+          <div className="mb-4">
+            <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
+              Location (optional)
+            </label>
+            <input
+              id="location"
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="e.g., Main Street & 5th Avenue"
+              disabled={isSubmitting}
+            />
+          </div>
+
           {/* Text Input */}
           <div className="mb-4">
             <label htmlFor="text" className="block text-sm font-medium text-gray-700 mb-2">
@@ -138,21 +162,22 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
               id="text"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              maxLength={250}
+              maxLength={2000}
               rows={4}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
               placeholder="Share local news, alerts, or updates..."
               disabled={isSubmitting}
               required
             />
-            <p className="text-xs text-gray-500 mt-1">{text.length}/250 characters</p>
+            <p className="text-xs text-gray-500 mt-1">{text.length}/2000 characters</p>
           </div>
 
-          {/* Image Upload */}
+          {/* Image Upload - TODO: Implement image upload service */}
           <div className="mb-4">
             <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
-              Photo (optional)
+              Photo (optional - coming soon)
             </label>
+            <p className="text-xs text-gray-500 mb-2">Image upload will be available soon</p>
             <div className="flex items-center gap-4">
               <label
                 htmlFor="image"
@@ -166,7 +191,7 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
                   accept="image/*"
                   onChange={handleImageChange}
                   className="hidden"
-                  disabled={isSubmitting}
+                  disabled={true} // Disabled until image upload service is implemented
                 />
               </label>
               {imagePreview && (

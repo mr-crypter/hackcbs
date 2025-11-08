@@ -20,8 +20,10 @@ const Feed = () => {
   }, [filters.category, filters.priority, filters.tag])
 
   useEffect(() => {
+    // Fetch summary when component mounts or when posts change
+    // Use community from first post, or default to 'Downtown'
     fetchAISummary()
-  }, [])
+  }, [posts])
 
   const fetchPosts = async () => {
     try {
@@ -47,10 +49,18 @@ const Feed = () => {
   const fetchAISummary = async () => {
     try {
       setLoadingSummary(true)
-      const response = await aiAPI.getSummary()
-      setAISummary(response.data)
+      // Get community from first post or use default
+      const community = posts.length > 0 && posts[0].community 
+        ? posts[0].community 
+        : 'Downtown' // Default community
+      
+      const response = await aiAPI.getSummary(community)
+      // Backend returns { success: true, summary: {...} }
+      // Extract the summary object
+      setAISummary(response.data.summary || response.data)
     } catch (error) {
       console.error('Error fetching AI summary:', error)
+      // Don't show error toast - summary is optional
     } finally {
       setLoadingSummary(false)
     }

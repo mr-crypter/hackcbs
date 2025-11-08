@@ -22,10 +22,11 @@ const corsOptions = {
   maxAge: 600, // Cache preflight request for 10 minutes
 };
 
-app.use(cors(corsOptions));
-
-// Handle preflight requests explicitly
+// Handle preflight requests FIRST - before any other middleware
 app.options('*', cors(corsOptions));
+
+// Apply CORS to all routes
+app.use(cors(corsOptions));
 
 // Log CORS configuration on startup
 logger.info(`CORS enabled for origin: ${corsOptions.origin}`);

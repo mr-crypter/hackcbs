@@ -25,7 +25,7 @@ const AIHighlight = ({ summary, loading }) => {
             AI Community Summary
           </h3>
           <p className="text-gray-700 leading-relaxed">
-            {summary.summary || summary.text || summary}
+            {summary.summaryText || summary.summary || summary.text || 'No summary available'}
           </p>
           {summary.keyPoints && summary.keyPoints.length > 0 && (
             <ul className="mt-3 space-y-1">
@@ -37,9 +37,23 @@ const AIHighlight = ({ summary, loading }) => {
               ))}
             </ul>
           )}
-          {summary.timestamp && (
-            <p className="text-xs text-gray-500 mt-3">
-              Last updated: {new Date(summary.timestamp).toLocaleString()}
+          {summary.stats && (
+            <div className="mt-3 flex gap-4 text-sm">
+              {summary.stats.totalPosts && (
+                <span className="text-gray-600">
+                  <span className="font-semibold text-primary-600">{summary.stats.totalPosts}</span> posts
+                </span>
+              )}
+              {summary.stats.emergencyCount && (
+                <span className="text-gray-600">
+                  <span className="font-semibold text-red-600">{summary.stats.emergencyCount}</span> emergencies
+                </span>
+              )}
+            </div>
+          )}
+          {(summary.updatedAt || summary.createdAt || summary.dateISO) && (
+            <p className="text-xs text-gray-500 mt-2">
+              Last updated: {new Date(summary.updatedAt || summary.createdAt || summary.dateISO).toLocaleString()}
             </p>
           )}
         </div>
