@@ -36,7 +36,7 @@ export const dailySummarySchema = z.object({
 });
 
 export function validate(schema: z.ZodSchema) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, _res: Response, next: NextFunction) => {
     try {
       const data = req.method === 'GET' ? req.query : req.body;
       const validated = schema.parse(data);

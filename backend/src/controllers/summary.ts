@@ -4,13 +4,14 @@ import { asyncHandler } from '../middleware/errors';
 import { getOrCreateDailySummary } from '../services/summary';
 
 export const getDailySummary = asyncHandler(
-  async (req: AuthRequest, res: Response, next: NextFunction) => {
+  async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     const { community, date } = req.query as any;
 
     if (!community) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Community parameter required',
       });
+      return;
     }
 
     const summary = await getOrCreateDailySummary(community, date);

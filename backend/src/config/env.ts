@@ -8,6 +8,7 @@ interface EnvConfig {
   mongoUri: string;
   hfToken?: string; // Optional - for AI features
   hfEndpoint?: string; // Custom HF Space endpoint
+  geminiApiKey?: string; // Optional - for tag extraction
   auth0Domain: string;
   auth0Audience: string;
   auth0Issuer: string;
@@ -37,6 +38,7 @@ function validateEnv(): EnvConfig {
     mongoUri: process.env.MONGO_URI!,
     hfToken: process.env.HF_TOKEN, // Optional
     hfEndpoint: process.env.HF_ENDPOINT || 'https://router.huggingface.co/hf-inference/models/facebook/bart-large-mnli',
+    geminiApiKey: process.env.GEMINI_API_KEY, // Optional
     auth0Domain: process.env.AUTH0_DOMAIN!,
     auth0Audience: process.env.AUTH0_AUDIENCE!,
     auth0Issuer: process.env.AUTH0_ISSUER!,

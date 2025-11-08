@@ -10,12 +10,15 @@ export interface IPost extends Document {
   text: string;
   imageUrl?: string;
   
-  // AI enrichment
-  urgency: UrgencyLevel;
-  urgencyScore: number;
+  // AI enrichment - from Gemini
   category: CategoryType;
   categoryScore: number;
+  entities: string[]; // People, places, organizations extracted by Gemini
   tags: string[];
+  
+  // AI enrichment - from HuggingFace
+  urgency: UrgencyLevel;
+  urgencyScore: number;
   
   // Meta
   createdAt: Date;
@@ -42,6 +45,28 @@ const PostSchema = new Schema<IPost>({
     type: String,
     default: null,
   },
+  // Gemini extraction fields
+  category: {
+    type: String,
+    enum: ['Safety', 'Events', 'Lost & Found', 'Public Works', 'General'],
+    default: 'General',
+    index: true,
+  },
+  categoryScore: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 1,
+  },
+  entities: {
+    type: [String],
+    default: [],
+  },
+  tags: {
+    type: [String],
+    default: [],
+  },
+  // HuggingFace urgency classification
   urgency: {
     type: String,
     enum: ['normal', 'urgent', 'emergency'],
@@ -53,21 +78,6 @@ const PostSchema = new Schema<IPost>({
     default: 0,
     min: 0,
     max: 1,
-  },
-  category: {
-    type: String,
-    enum: ['Safety', 'Events', 'Lost & Found', 'Public Works', 'General'],
-    default: 'General',
-  },
-  categoryScore: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 1,
-  },
-  tags: {
-    type: [String],
-    default: [],
   },
   location: {
     type: String,

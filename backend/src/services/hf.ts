@@ -43,7 +43,7 @@ async function query(data: any): Promise<any> {
     throw new Error(`HF API error: ${response.status} - ${errorText}`);
   }
 
-  const result = await response.json();
+  const result: any = await response.json();
   
   // Handle HF Spaces response format: { data: [result] }
   if (isHfSpace && result.data && Array.isArray(result.data) && result.data.length > 0) {
