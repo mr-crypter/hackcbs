@@ -33,7 +33,7 @@ const Feed = () => {
       
       const params = {}
       if (filters.category) params.category = filters.category
-      if (filters.priority) params.priority = filters.priority
+      if (filters.priority) params.urgency = filters.priority.toLowerCase() // Map priority filter to urgency API param
       if (filters.tag) params.tag = filters.tag
 
       const response = await postsAPI.getAll(params)
@@ -74,7 +74,7 @@ const Feed = () => {
 
   const filteredPosts = posts.filter((post) => {
     if (filters.category && post.category !== filters.category) return false
-    if (filters.priority && post.priority !== filters.priority) return false
+    if (filters.priority && post.urgency?.toLowerCase() !== filters.priority.toLowerCase()) return false
     if (filters.tag && !post.tags?.includes(filters.tag)) return false
     return true
   })
@@ -96,8 +96,14 @@ const Feed = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPosts.map((post) => (
-              <PostCard key={post._id || post.id} post={post} />
+            {filteredPosts.map((post, index) => (
+              <div 
+                key={post._id || post.id} 
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <PostCard post={post} />
+              </div>
             ))}
           </div>
         )}
@@ -106,10 +112,10 @@ const Feed = () => {
       {/* Floating Post Button */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-8 right-8 bg-primary-600 text-white p-4 rounded-full shadow-lg hover:bg-primary-700 transition-colors z-50"
+        className="fixed bottom-8 right-8 bg-gradient-to-br from-primary-600 to-primary-700 text-white p-5 rounded-full shadow-large hover:shadow-xl transition-all duration-300 z-50 transform hover:scale-110 active:scale-95 group"
         aria-label="Create new post"
       >
-        <Plus className="w-6 h-6" />
+        <Plus className="w-6 h-6 transition-transform duration-300 group-hover:rotate-90" />
       </button>
 
       <PostFormModal

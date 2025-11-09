@@ -151,15 +151,15 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="bg-white rounded-2xl shadow-large max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
           <h2 className="text-2xl font-bold text-gray-900">Create New Post</h2>
           <button
             onClick={handleClose}
             disabled={isSubmitting}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100"
           >
             <X className="w-6 h-6" />
           </button>
@@ -169,7 +169,7 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
         <form onSubmit={handleSubmit} className="p-6">
           {/* AI Processing Overlay */}
           {isAnalyzing && (
-            <div className="mb-4 bg-primary-50 border border-primary-200 rounded-lg p-4 flex items-center">
+            <div className="mb-4 bg-gradient-to-r from-primary-50 to-success-50 border border-primary-200 rounded-xl p-4 flex items-center shadow-soft animate-fade-in">
               <Loader2 className="w-5 h-5 animate-spin text-primary-600 mr-3" />
               <span className="text-primary-700 font-medium">
                 Analyzing with AI... Extracting category, tags, and urgency...
@@ -187,7 +187,7 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
               type="text"
               value={community}
               onChange={(e) => setCommunity(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="input"
               placeholder="e.g., Downtown, Northside, Westside"
               disabled={isSubmitting}
               required
@@ -204,7 +204,7 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="input"
               placeholder="e.g., Main Street & 5th Avenue"
               disabled={isSubmitting}
             />
@@ -221,7 +221,7 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
               onChange={(e) => setText(e.target.value)}
               maxLength={2000}
               rows={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              className="input resize-none"
               placeholder="Share local news, alerts, or updates..."
               disabled={isSubmitting}
               required
@@ -305,7 +305,7 @@ const PostFormModal = ({ isOpen, onClose, onPostCreated }) => {
             <button
               type="submit"
               disabled={isSubmitting || !text.trim() || isUploading}
-              className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              className="btn btn-primary px-6 py-2.5 rounded-lg flex items-center"
             >
               {isSubmitting ? (
                 <>
