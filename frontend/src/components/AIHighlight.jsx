@@ -15,13 +15,13 @@ const AIHighlight = ({ summary, loading }) => {
   if (!summary) return null
 
   return (
-    <div className="bg-gradient-to-r from-primary-50 to-success-50 border border-primary-200 rounded-xl p-6 mb-6">
+    <div className="bg-gradient-to-r from-primary-50 to-success-50 border border-primary-200 rounded-xl p-6 mb-6 shadow-soft animate-fade-in">
       <div className="flex items-start">
-        <div className="bg-primary-100 rounded-full p-2 mr-4 flex-shrink-0">
-          <Sparkles className="w-5 h-5 text-primary-600" />
+        <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl p-3 mr-4 flex-shrink-0 shadow-sm">
+          <Sparkles className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-bold text-gray-900 mb-3">
             AI Community Summary
           </h3>
           <p className="text-gray-700 leading-relaxed">
