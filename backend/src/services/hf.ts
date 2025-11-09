@@ -120,8 +120,17 @@ export async function classifyUrgency(text: string): Promise<ClassificationResul
       parameters: { candidate_labels: URGENCY_LABELS },
     });
     
-    const label = res?.labels?.[0] || "normal";
-    const score = res?.scores?.[0] || 0;
+    // Log raw response for debugging
+    logger.info('HF Raw Response', { 
+      text: text.substring(0, 60),
+      rawResponse: Array.isArray(res) ? res.slice(0, 3) : res 
+    });
+    
+    // Handle both response formats:
+    // Array: [{label: "emergency", score: 0.80}, ...]
+    // Object: {labels: ["emergency"], scores: [0.80]}
+    const label = Array.isArray(res) ? res[0]?.label : res?.labels?.[0] || "normal";
+    const score = Array.isArray(res) ? res[0]?.score : res?.scores?.[0] || 0;
     
     // Apply thresholds from PRD
     let finalLabel = label;
@@ -132,6 +141,14 @@ export async function classifyUrgency(text: string): Promise<ClassificationResul
     } else {
       finalLabel = "normal";
     }
+    
+    logger.info('Urgency classification result', { 
+      text: text.substring(0, 50), 
+      rawLabel: label,
+      finalLabel,
+      score,
+      thresholdApplied: label !== finalLabel
+    });
     
     return { label: finalLabel, score };
   } catch (error) {
@@ -147,8 +164,9 @@ export async function classifyCategory(text: string): Promise<ClassificationResu
       parameters: { candidate_labels: CATEGORY_LABELS },
     });
     
-    const label = res?.labels?.[0] || "General";
-    const score = res?.scores?.[0] || 0;
+    // Handle both response formats
+    const label = Array.isArray(res) ? res[0]?.label : res?.labels?.[0] || "General";
+    const score = Array.isArray(res) ? res[0]?.score : res?.scores?.[0] || 0;
     
     return { label, score };
   } catch (error) {
@@ -164,19 +182,26 @@ export async function extractTags(text: string, threshold = 0.25): Promise<strin
       parameters: { candidate_labels: TAG_LABELS },
     });
     
-    if (!res?.labels || !res?.scores) {
-      return [];
-    }
-    
-    // Keep all labels above threshold
+    // Handle both response formats
     const tags: string[] = [];
-    for (let i = 0; i < res.labels.length; i++) {
-      if (res.scores[i] >= threshold) {
-        tags.push(res.labels[i]);
+    
+    if (Array.isArray(res)) {
+      // Array format: [{label: "fire", score: 0.8}, ...]
+      for (const item of res) {
+        if (item.score >= threshold) {
+          tags.push(item.label);
+        }
+      }
+    } else if (res?.labels && res?.scores) {
+      // Object format: {labels: ["fire"], scores: [0.8]}
+      for (let i = 0; i < res.labels.length; i++) {
+        if (res.scores[i] >= threshold) {
+          tags.push(res.labels[i]);
+        }
       }
     }
     
-    return tags;
+    return tags.slice(0, 5); // Limit to 5 tags
   } catch (error) {
     logger.error('Failed to extract tags, returning empty', { error });
     return [];
